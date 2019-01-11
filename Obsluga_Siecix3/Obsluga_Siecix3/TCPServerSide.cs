@@ -13,9 +13,17 @@ namespace Obsluga_Siecix3
 {
     class TCPServerSide
     {
+
+        public delegate void OnReceivedTCPMessage(TcpClient client, string message);
+        public event OnReceivedTCPMessage E_OnReceivedTCPMessage;
+
+        public delegate void StartedServer();
+        public event StartedServer E_StartedServer;
+
+
         int _port { get; set; }
-        TcpListener ServerListener;
-        System.Timers.Timer EchoClientsTimer;
+       TcpListener ServerListener;
+       System.Timers.Timer EchoClientsTimer;
        public struct ClientInst
         {
            public TcpClient Client;
@@ -42,12 +50,12 @@ namespace Obsluga_Siecix3
             {
                 ServerListener = new TcpListener(IPAddress.Parse(ip), port);
                 ServerListener.Start();
-                Console.WriteLine("> "+"Uruchomiono serwer TCP");
+                Console.WriteLine("> "+"Uruchomiono serwer TCP: "+ip+":"+port);
                 Console.WriteLine("> " + "Oczekiwanie na połączenia...");
                 MainServerThread = new Thread(MainLoop);
                 MainServerThread.Start();
                 EchoClientsTimer.Enabled = true;
-                
+                E_StartedServer();
 
             }
             catch
@@ -59,12 +67,15 @@ namespace Obsluga_Siecix3
 
         private void EchoClients(Object source, ElapsedEventArgs e)
         {
+            if(clients.Count == 0) return;
             for (int i = 0; i < clients.Count; i++)
             {
+               
                 ClientInst tmp = clients[i];
                 tmp.lastresponse += 2;
                 clients[i] = tmp;
-                if (tmp.lastresponse > 10)
+              //  if(tmp.Client.Client.Available !=0) 
+                if (tmp.Client.Client.Available != 0 || tmp.lastresponse > 10)
                 {
                     DisconnectClient(i);
                     return;
@@ -149,7 +160,7 @@ namespace Obsluga_Siecix3
 
         void ReceiveMessage(TcpClient client, string message)
         {
-            Console.WriteLine("Receiving: " + message + " | from: " + client.Client.RemoteEndPoint.ToString());
+            E_OnReceivedTCPMessage(client, message);
             if (message.Equals("ECHO"))
             {
                 for (int i = 0; i < clients.Count; i++)

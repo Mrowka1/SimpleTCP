@@ -5,3 +5,10 @@ C:\Users\Arek\source\repos\Obsluga_Siecix3\Obsluga_Siecix3\obj\Debug\Obsluga_Sie
 C:\Users\Arek\source\repos\Obsluga_Siecix3\Obsluga_Siecix3\obj\Debug\Obsluga_Siecix3.csproj.CoreCompileInputs.cache
 C:\Users\Arek\source\repos\Obsluga_Siecix3\Obsluga_Siecix3\obj\Debug\Obsluga_Siecix3.exe
 C:\Users\Arek\source\repos\Obsluga_Siecix3\Obsluga_Siecix3\obj\Debug\Obsluga_Siecix3.pdb
+C:\Users\Arek\Source\Repos\git\Mrowka1\SimpleTCP\Obsluga_Siecix3\Obsluga_Siecix3\obj\Debug\Obsluga_Siecix3.csprojAssemblyReference.cache
+C:\Users\Arek\Source\Repos\git\Mrowka1\SimpleTCP\Obsluga_Siecix3\Obsluga_Siecix3\obj\Debug\Obsluga_Siecix3.csproj.CoreCompileInputs.cache
+C:\Users\Arek\Source\Repos\git\Mrowka1\SimpleTCP\Obsluga_Siecix3\Obsluga_Siecix3\obj\Debug\Obsluga_Siecix3.exe
+C:\Users\Arek\Source\Repos\git\Mrowka1\SimpleTCP\Obsluga_Siecix3\Obsluga_Siecix3\obj\Debug\Obsluga_Siecix3.pdb
+C:\Users\Arek\Source\Repos\git\Mrowka1\SimpleTCP\Obsluga_Siecix3\Obsluga_Siecix3\bin\Debug\Obsluga_Siecix3.exe.config
+C:\Users\Arek\Source\Repos\git\Mrowka1\SimpleTCP\Obsluga_Siecix3\Obsluga_Siecix3\bin\Debug\Obsluga_Siecix3.exe
+C:\Users\Arek\Source\Repos\git\Mrowka1\SimpleTCP\Obsluga_Siecix3\Obsluga_Siecix3\bin\Debug\Obsluga_Siecix3.pdb

@@ -6,20 +6,28 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
+
+
+/*Test całości*/
+
 namespace Obsluga_Siecix3
 {
     class MainBehaviour
     {
+       
         TCPClientSide clienthndl;
         TCPServerSide serverhndl;
         public MainBehaviour()
         {
-            
+
             Console.WriteLine("> "+"Główna klasa aplikacji zainicjowana!");
             string command = Console.ReadLine();
             if (command.Equals("s"))
             {
                 serverhndl = new TCPServerSide();
+                serverhndl.E_StartedServer += ServerStarted;
+                serverhndl.E_OnReceivedTCPMessage += ReceivedMessage;
+
                 serverhndl.Init(GetLocalIPAddress(), 7777);
             }
             else if (command.Equals("c"))
@@ -27,8 +35,7 @@ namespace Obsluga_Siecix3
                 clienthndl = new TCPClientSide();
                 clienthndl.OnConnect += Okokok;
                 clienthndl.ReceivedServerMessage += Client_ReceivedServerMessage;
-         //       clienthndl.OnDisconnected += Kokoko;
-                clienthndl.ConnectTo("localhost", 7777);
+                clienthndl.ConnectTo(Console.ReadLine(), 7777);
                 while (true)
                 {
                     command = Console.ReadLine();
@@ -37,16 +44,25 @@ namespace Obsluga_Siecix3
                     Console.WriteLine("> "+" wysyłanie: "+command);
                 }
             }
-            //  Console.ReadKey();
+        }
+        void ServerStarted()
+        {
+
+        }
+        void ReceivedMessage(TcpClient client, string message)
+        {
+            Console.WriteLine("["+client.Client.RemoteEndPoint.ToString()+"] : "+message);
+
         }
         void Client_ReceivedServerMessage(string m)
         {
             Console.WriteLine(m);
         }
 
-        void Okokok()
+        void Okokok(Boolean success, string error)
         {
-            Console.WriteLine("połączono");
+            if (success) Console.WriteLine("połączono");
+            else Console.WriteLine("Problem z połączeniem: "+error);
         }
         public static string GetLocalIPAddress()
         {
@@ -58,7 +74,10 @@ namespace Obsluga_Siecix3
                     return ip.ToString();
                 }
             }
-            throw new Exception("No network adapters with an IPv4 address in the system!");
+            throw new Exception("Brak poprawnego interfejsu sieciowego!");
         }
+
+
+        //
     }
 }

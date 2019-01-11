@@ -15,7 +15,7 @@ namespace Obsluga_Siecix3
 
         bool connected = false;
 
-        public delegate void OnConnectedToServer();
+        public delegate void OnConnectedToServer(Boolean success, string error);
         public event OnConnectedToServer OnConnect;
 
         public delegate void OnRemoteDisconnect();
@@ -36,13 +36,17 @@ namespace Obsluga_Siecix3
 
         void EchoClients(Object source, ElapsedEventArgs e)
         {
-           
+
             LastResponse += 2;
-            
+           // Console.Beep();
+            Debug.WriteLine("Ostatnia odpowiedź " + LastResponse + " sekund temu.");
             if (LastResponse > 10)
             {
                 Debug.WriteLine("> " + "Utracono połączenie z serwerem! " + connected.ToString());
-                Disconnected();  
+                // EchoClientsTimer.Dispose();
+                Disconnected();
+
+
             }
         }
 
@@ -53,6 +57,7 @@ namespace Obsluga_Siecix3
 
         public void ConnectTo(string serverIP, int serverPort)
         {
+            PrepareTimer();
             Debug.WriteLine("> " + "Próba połączenia z " + serverIP + ":" + serverPort);
             try
             {
@@ -61,11 +66,14 @@ namespace Obsluga_Siecix3
                 connected = true;
                 DataReceivingThread = new Thread(AcceptDataFromServer);
                 DataReceivingThread.Start();
-                OnConnect();
+                EchoClientsTimer.Enabled = true;
+                // EchoClientsTimer.Start();
+                OnConnect(true, "");
                 // AcceptDataFromServer();
             }
             catch (SocketException s)
             {
+                OnConnect(false, s.ToString());
                 Debug.WriteLine("> " + "nie można się połączyć z " + serverIP + ":" + serverPort + " - " + s.ToString());
             }
         }
@@ -73,19 +81,20 @@ namespace Obsluga_Siecix3
         private void AcceptDataFromServer()
         {
             NetworkStream stream;
-            Debug.WriteLine("> "+"Wątek zainicjowany. Oczekiwanie na dane od serwera TCP");
+            Debug.WriteLine("> " + "Wątek zainicjowany. Oczekiwanie na dane od serwera TCP");
             stream = LocalClient?.GetStream();
-         
-            while (true)
+
+            while (/*LocalClient.Client.Available != 0*/true)
             {
                 if (!connected) break;
                 Byte[] data = new Byte[256];
 
                 String responseData = String.Empty;
 
-             
+
                 if (stream.CanRead && connected)
                 {
+                   
                     try
                     {
                         Int32 bytes = stream.Read(data, 0, data.Length);
@@ -95,23 +104,26 @@ namespace Obsluga_Siecix3
                     catch
                     {
 
-                        Debug.WriteLine("> "+"Nie można odczytać danych z serwera!");
-                          
-                         //   connected = false;
-                       //     LocalClient.Close();
-                           // break;
+                        //     Debug.WriteLine("> " + "Nie można odczytać danych z serwera!");
+
+                        //   connected = false;
+                        //     LocalClient.Close();
+                        // if(!connected) break;
                     }
                 }
-                else Debug.WriteLine("> "+"Brak danych");
-                    
+                else { }// Debug.WriteLine("> " + "Brak danych");
+
             }
+            Reset();
+
         }
 
         void ReceiveMessage(string message)
         {
-            LastResponse = 0;
+
             if (message.Equals("ECHO"))
             {
+                LastResponse = 0;
                 SendMessage("ECHO");
             }
             else if (message.Equals("DISCONNECT"))
@@ -124,26 +136,34 @@ namespace Obsluga_Siecix3
             }
 
         }
-
-        void Disconnected()
+        void Reset()
         {
-            DataReceivingThread.Abort();
-            Debug.WriteLine("Odebrano żądanie zerwania połączenia.");
             connected = false;
+            LocalClient = null;
+            DataReceivingThread = null;
+            EchoClientsTimer.Dispose();
+            EchoClientsTimer = null;
+            LastResponse = 0;
+            DataReceivingThread.Abort();
             LocalClient.GetStream().Close();
             LocalClient.Close();
+        }
+        void Disconnected()
+        {   
+            Reset();
+            Debug.WriteLine("Odebrano żądanie zerwania połączenia.");
             OnDisconnected();
         }
 
         public void SendMessage(string message)
         {
             if (!connected) return;
-           
+
 
             String responseData = String.Empty;
             NetworkStream stream;
             stream = LocalClient?.GetStream();
-            
+
 
             if (connected)
             {

@@ -8,7 +8,7 @@ namespace Obsluga_Siecix3
 {
     class Program
     {
-        static MainBehaviour ApplicationMain;
+        static public MainBehaviour ApplicationMain;
         static void Main(string[] args)
         {
             ApplicationMain = new MainBehaviour();
