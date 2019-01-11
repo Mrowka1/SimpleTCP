@@ -52,7 +52,6 @@ namespace Obsluga_Siecix3
 
         public TCPClientSide()
         {
-
         }
 
         public void ConnectTo(string serverIP, int serverPort)
@@ -120,7 +119,6 @@ namespace Obsluga_Siecix3
 
         void ReceiveMessage(string message)
         {
-
             if (message.Equals("ECHO"))
             {
                 LastResponse = 0;
@@ -134,8 +132,8 @@ namespace Obsluga_Siecix3
             {
                 ReceivedServerMessage(message);
             }
-
         }
+
         void Reset()
         {
             connected = false;
@@ -148,6 +146,7 @@ namespace Obsluga_Siecix3
             LocalClient.GetStream().Close();
             LocalClient.Close();
         }
+
         void Disconnected()
         {   
             Reset();
