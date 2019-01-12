@@ -194,7 +194,7 @@ namespace Obsluga_Siecix3
 
 
 
-                SendMessage(client, "Odpowiedź od serwera!");
+             //   SendMessage(client, "Odpowiedź od serwera!");
 
                     Console.WriteLine("> "+"Connected "+client.Client.RemoteEndPoint.ToString());
                     int count = 0;
@@ -207,7 +207,7 @@ namespace Obsluga_Siecix3
             }
             else
             {
-
+                return;
             }
 
         }

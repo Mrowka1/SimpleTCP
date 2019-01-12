@@ -81,7 +81,7 @@ namespace Obsluga_Siecix3
         {
             NetworkStream stream;
             Debug.WriteLine("> " + "Wątek zainicjowany. Oczekiwanie na dane od serwera TCP");
-            stream = LocalClient?.GetStream();
+            stream = LocalClient.GetStream();
 
             while (/*LocalClient.Client.Available != 0*/true)
             {
