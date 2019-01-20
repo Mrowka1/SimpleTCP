@@ -32,6 +32,8 @@ namespace Obsluga_Siecix3
         List<ClientInst> clients = new List<ClientInst>();
         Thread MainServerThread;
 
+        bool ServerAlive = false;
+
         void PrepareTimer()
         {
             EchoClientsTimer = new System.Timers.Timer(2000);
@@ -50,6 +52,7 @@ namespace Obsluga_Siecix3
             {
                 ServerListener = new TcpListener(IPAddress.Parse(ip), port);
                 ServerListener.Start();
+                ServerAlive = true;
                 Console.WriteLine("> "+"Uruchomiono serwer TCP: "+ip+":"+port);
                 Console.WriteLine("> " + "Oczekiwanie na połączenia...");
                 MainServerThread = new Thread(MainLoop);
@@ -65,17 +68,27 @@ namespace Obsluga_Siecix3
             }
         }
 
+       public void StopServer()
+        {
+            for(int i = 0; i < clients.Count(); i++)
+            {
+                DisconnectClient(i);
+            }
+            ServerAlive = false;
+            ServerListener.Stop();
+            MainServerThread.Abort();
+            ServerListener = null;
+        }
+
         private void EchoClients(Object source, ElapsedEventArgs e)
         {
             if(clients.Count == 0) return;
             for (int i = 0; i < clients.Count; i++)
             {
-               
                 ClientInst tmp = clients[i];
                 tmp.lastresponse += 2;
                 clients[i] = tmp;
-              //  if(tmp.Client.Client.Available !=0) 
-                if (tmp.Client.Client.Available != 0 || tmp.lastresponse > 10)
+                if (tmp.lastresponse > 10)
                 {
                     DisconnectClient(i);
                     return;
@@ -84,21 +97,25 @@ namespace Obsluga_Siecix3
             }
         }
 
-        void SendMessage(TcpClient client, string message)
+        bool SendMessage(TcpClient client, string message)
         {
-            Console.WriteLine("Sending: " + message + " | to: " + client.Client.RemoteEndPoint.ToString());
+            
             try
             {
                 NetworkStream stream = client.GetStream();
                 if (stream.CanWrite)
                 {
+                    Console.WriteLine("Sending: " + message + " | to: " + client.Client.RemoteEndPoint.ToString());
                     Byte[] data = System.Text.Encoding.UTF8.GetBytes(message);
                     stream.Write(data, 0, data.Length);
+                    return true;
                 }
+                else return false;
             }
             catch
             {
-                Console.WriteLine("NIE WYSŁANO WIADOMOŚĆI");
+                Console.WriteLine("NIE WYSŁANO WIADOMOŚĆI DO: "+client.Client.RemoteEndPoint.ToString());
+                return false;
             }
         }
 
@@ -117,14 +134,12 @@ namespace Obsluga_Siecix3
                 }
                 catch { }
             }
-
             clients.RemoveAt(id);
-       
         }
 
         private void MainLoop()
         {
-            while (true)
+            while (ServerAlive)
             {
                 AcceptClients();
                 ChceckForIncomingData();
@@ -155,7 +170,6 @@ namespace Obsluga_Siecix3
                     Console.WriteLine("Treść błędu: "+e.ToString());
                 }
             }
-
         }
 
         void ReceiveMessage(TcpClient client, string message)
@@ -174,7 +188,6 @@ namespace Obsluga_Siecix3
                     }
                 }
             }
-
         }
 
         private void AcceptClients()
@@ -184,7 +197,8 @@ namespace Obsluga_Siecix3
             if (ServerListener.Pending())
                 {
                     TcpClient client = ServerListener.AcceptTcpClient();
-                ClientInst tmp = new ClientInst
+
+                var tmp = new ClientInst
                 {
                     Client = client,
                     lastresponse = 0
@@ -192,18 +206,14 @@ namespace Obsluga_Siecix3
 
                 clients.Add(tmp);
 
-
-
-             //   SendMessage(client, "Odpowiedź od serwera!");
-
-                    Console.WriteLine("> "+"Connected "+client.Client.RemoteEndPoint.ToString());
+                   Console.WriteLine("> "+"Connected "+client.Client.RemoteEndPoint.ToString());
                     int count = 0;
                     foreach (ClientInst element in clients)
                     {
                         count++;
                         Console.Write("["+count+"]"+element.Client.Client.RemoteEndPoint.ToString()+" ");
                     }
-                    Console.WriteLine();
+                    Console.WriteLine(); 
             }
             else
             {

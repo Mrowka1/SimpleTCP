@@ -27,14 +27,25 @@ namespace Obsluga_Siecix3
                 serverhndl = new TCPServerSide();
                 serverhndl.E_StartedServer += ServerStarted;
                 serverhndl.E_OnReceivedTCPMessage += ReceivedMessage;
+                
 
                 serverhndl.Init(GetLocalIPAddress(), 7777);
+                while (true)
+                {
+                    command = Console.ReadLine();
+                    if (command.Equals("stop"))
+                    {
+                        serverhndl.StopServer();
+                    }
+                }
             }
             else if (command.Equals("c"))
             {
                 clienthndl = new TCPClientSide();
                 clienthndl.OnConnect += Okokok;
                 clienthndl.ReceivedServerMessage += Client_ReceivedServerMessage;
+                clienthndl.OnDisconnected += (s) =>  { Console.WriteLine("Rozłączono "+s.ToString()); };
+
                 clienthndl.ConnectTo(Console.ReadLine(), 7777);
                 while (true)
                 {
@@ -45,6 +56,7 @@ namespace Obsluga_Siecix3
                 }
             }
         }
+     
         void ServerStarted()
         {
 
