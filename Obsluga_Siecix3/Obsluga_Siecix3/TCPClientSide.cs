@@ -81,9 +81,9 @@ namespace Obsluga_Siecix3
             Debug.WriteLine("> " + "Wątek zainicjowany. Oczekiwanie na dane od serwera TCP");
             stream = LocalClient.GetStream();
 
-            while (true)
+            while (connected)
             {
-                if (!connected) break;
+            
                 Byte[] data = new Byte[256];
 
                 String responseData = String.Empty;
@@ -158,8 +158,7 @@ namespace Obsluga_Siecix3
             stream = LocalClient?.GetStream();
 
 
-            if (connected)
-            {
+     
                 try
                 {
                     Byte[] data = new Byte[256];
@@ -170,7 +169,7 @@ namespace Obsluga_Siecix3
                 {
 
                 }
-            }
+            
         }
 
 

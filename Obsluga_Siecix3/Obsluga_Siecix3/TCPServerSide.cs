@@ -7,7 +7,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Timers;
-
+using System.Diagnostics;
 
 namespace Obsluga_Siecix3
 {
@@ -29,7 +29,7 @@ namespace Obsluga_Siecix3
            public TcpClient Client;
             public int lastresponse;
         }
-        List<ClientInst> clients = new List<ClientInst>();
+      public List<ClientInst> clients = new List<ClientInst>();
         Thread MainServerThread;
 
         bool ServerAlive = false;
@@ -47,14 +47,14 @@ namespace Obsluga_Siecix3
             
             _port = port;
             PrepareTimer();
-            Console.WriteLine("> "+"Uruchamianie serwera TCP...");
+            Debug.WriteLine("> "+"Uruchamianie serwera TCP...");
             try
             {
                 ServerListener = new TcpListener(IPAddress.Parse(ip), port);
                 ServerListener.Start();
                 ServerAlive = true;
-                Console.WriteLine("> "+"Uruchomiono serwer TCP: "+ip+":"+port);
-                Console.WriteLine("> " + "Oczekiwanie na połączenia...");
+                Debug.WriteLine("> "+"Uruchomiono serwer TCP: "+ip+":"+port);
+                Debug.WriteLine("> " + "Oczekiwanie na połączenia...");
                 MainServerThread = new Thread(MainLoop);
                 MainServerThread.Start();
                 EchoClientsTimer.Enabled = true;
@@ -63,8 +63,8 @@ namespace Obsluga_Siecix3
             }
             catch
             {
-                Console.WriteLine("> "+"Nie można uruchomić serwera TCP");
-                Console.ReadKey();
+                Debug.WriteLine("> "+"Nie można uruchomić serwera TCP");
+               // Console.ReadKey();
             }
         }
 
@@ -105,7 +105,7 @@ namespace Obsluga_Siecix3
                 NetworkStream stream = client.GetStream();
                 if (stream.CanWrite)
                 {
-                    Console.WriteLine("Sending: " + message + " | to: " + client.Client.RemoteEndPoint.ToString());
+                    Debug.WriteLine("Sending: " + message + " | to: " + client.Client.RemoteEndPoint.ToString());
                     Byte[] data = System.Text.Encoding.UTF8.GetBytes(message);
                     stream.Write(data, 0, data.Length);
                     return true;
@@ -114,7 +114,7 @@ namespace Obsluga_Siecix3
             }
             catch
             {
-                Console.WriteLine("NIE WYSŁANO WIADOMOŚĆI DO: "+client.Client.RemoteEndPoint.ToString());
+                Debug.WriteLine("NIE WYSŁANO WIADOMOŚĆI DO: "+client.Client.RemoteEndPoint.ToString());
                 return false;
             }
         }
@@ -167,7 +167,7 @@ namespace Obsluga_Siecix3
                 }
                 catch(SocketException e)
                 {
-                    Console.WriteLine("Treść błędu: "+e.ToString());
+                    Debug.WriteLine("Treść błędu: "+e.ToString());
                 }
             }
         }
@@ -206,14 +206,14 @@ namespace Obsluga_Siecix3
 
                 clients.Add(tmp);
 
-                   Console.WriteLine("> "+"Connected "+client.Client.RemoteEndPoint.ToString());
+                   Debug.WriteLine("> "+"Connected "+client.Client.RemoteEndPoint.ToString());
                     int count = 0;
                     foreach (ClientInst element in clients)
                     {
                         count++;
                         Console.Write("["+count+"]"+element.Client.Client.RemoteEndPoint.ToString()+" ");
                     }
-                    Console.WriteLine(); 
+               
             }
             else
             {
@@ -225,6 +225,8 @@ namespace Obsluga_Siecix3
         {
             EchoClientsTimer.Stop();
             EchoClientsTimer.Dispose();
+
+            //wip
         }
     }
 }

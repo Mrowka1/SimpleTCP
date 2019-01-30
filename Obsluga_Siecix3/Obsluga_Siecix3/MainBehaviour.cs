@@ -5,6 +5,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using IniParser;
+using IniParser.Model;
 
 
 
@@ -21,7 +23,22 @@ namespace Obsluga_Siecix3
         {
 
             Console.WriteLine("> "+"Główna klasa aplikacji zainicjowana!");
+
+            var parser = new FileIniDataParser();
+            IniData data = parser.ReadFile("config.ini");
+            
+            string _ip = data["main"]["IP"];
+            int _port = int.Parse(data["main"]["port"]);
+            int compcnt = int.Parse(data["main"]["componentsCount"]);
+            for (int i = 1; i<=compcnt; i++)
+            {
+                Console.WriteLine(data["components"]["component"+i+"text"]);
+            }
+            Console.WriteLine(data.ToString());
+            Console.WriteLine(_ip+":"+_port);
+           // Console.ReadLine();
             string command = Console.ReadLine();
+
             if (command.Equals("s"))
             {
                 serverhndl = new TCPServerSide();
@@ -29,7 +46,7 @@ namespace Obsluga_Siecix3
                 serverhndl.E_OnReceivedTCPMessage += ReceivedMessage;
                 
 
-                serverhndl.Init(GetLocalIPAddress(), 7777);
+                serverhndl.Init(GetLocalIPAddress(), _port);
                 while (true)
                 {
                     command = Console.ReadLine();
@@ -46,7 +63,7 @@ namespace Obsluga_Siecix3
                 clienthndl.ReceivedServerMessage += Client_ReceivedServerMessage;
                 clienthndl.OnDisconnected += (s) =>  { Console.WriteLine("Rozłączono "+s.ToString()); };
 
-                clienthndl.ConnectTo(Console.ReadLine(), 7777);
+                clienthndl.ConnectTo(_ip, _port);
                 while (true)
                 {
                     command = Console.ReadLine();

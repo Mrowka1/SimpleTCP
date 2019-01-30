@@ -12,3 +12,6 @@ C:\Users\Arek\Source\Repos\git\Mrowka1\SimpleTCP\Obsluga_Siecix3\Obsluga_Siecix3
 C:\Users\Arek\Source\Repos\git\Mrowka1\SimpleTCP\Obsluga_Siecix3\Obsluga_Siecix3\bin\Debug\Obsluga_Siecix3.exe.config
 C:\Users\Arek\Source\Repos\git\Mrowka1\SimpleTCP\Obsluga_Siecix3\Obsluga_Siecix3\bin\Debug\Obsluga_Siecix3.exe
 C:\Users\Arek\Source\Repos\git\Mrowka1\SimpleTCP\Obsluga_Siecix3\Obsluga_Siecix3\bin\Debug\Obsluga_Siecix3.pdb
+C:\Users\Arek\source\repos\git\Mrowka1\SimpleTCP\Obsluga_Siecix3\Obsluga_Siecix3\bin\Debug\INIFileParser.dll
+C:\Users\Arek\source\repos\git\Mrowka1\SimpleTCP\Obsluga_Siecix3\Obsluga_Siecix3\bin\Debug\INIFileParser.xml
+C:\Users\Arek\source\repos\git\Mrowka1\SimpleTCP\Obsluga_Siecix3\Obsluga_Siecix3\obj\Debug\Obsluga_Siecix3.csproj.CopyComplete
